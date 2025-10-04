@@ -5,9 +5,10 @@ import {
   HStack, 
   Text, 
   Pressable,
-  Spinner
+  Spinner,
+  Image,
+  Center
 } from 'native-base';
-import { useNavigation } from '@react-navigation/native';
 
 interface PropsCardPokemon {
   pokemon: {
@@ -18,7 +19,7 @@ interface PropsCardPokemon {
   onPress: () => void;
 }
 
-const coresPorTipo: { [key: string]: string } = {
+export const coresPorTipo: { [key: string]: string } = {
   normal: 'gray.400',
   fire: 'orange.500',
   water: 'blue.500', 
@@ -46,68 +47,141 @@ export default function CardPokemon({
 }: PropsCardPokemon) {
   const [tipoPokemon, setTipoPokemon] = useState<string>('normal');
   const [carregandoTipo, setCarregandoTipo] = useState(true);
+  const [imagemPokemon, setImagemPokemon] = useState<string>('');
 
-// buscando tipo
+  // buscando tipo e imagem
   useEffect(() => {
-    const buscarTipoPokemon = async () => {
+    const buscarDetalhesPokemon = async () => {
       try {
         const resposta = await fetch(pokemon.url);
         const dados = await resposta.json();
         const tipo = dados.types[0]?.type?.name || 'normal';
+        const imagem = dados.sprites.other['official-artwork'].front_default || 
+                      dados.sprites.front_default;
+        
         setTipoPokemon(tipo);
+        setImagemPokemon(imagem);
       } catch (erro) {
         setTipoPokemon('normal');
+        setImagemPokemon('');
       } finally {
         setCarregandoTipo(false);
       }
     };
 
-    buscarTipoPokemon();
+    buscarDetalhesPokemon();
   }, [pokemon.url]);
 
-  const corBorda = coresPorTipo[tipoPokemon] || 'gray.400';
+  const corFundo = coresPorTipo[tipoPokemon] || 'gray.400';
 
-  //  loading enquanto busca o tipo
+  // loading enquanto busca os dados
   if (carregandoTipo) {
     return (
-      <Box bg="white" p={4} m={2} borderRadius="lg" shadow={2}>
-        <HStack justifyContent="space-between" alignItems="center">
-          <VStack>
-            <Text fontSize="lg" fontWeight="bold" color="gray.800">
-              {pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1)}
-            </Text>
-            <Text color="gray.500" fontSize="sm">#{numero}</Text>
+      <Box 
+        bg="white" 
+        p={4} 
+        m={1} 
+        borderRadius="xl" 
+        shadow={2}
+        width="48%"
+        justifyContent="center"
+        style={{aspectRatio: 1}}
+      >
+        <Center>
+          <VStack space={2} alignItems="center">
+            <Spinner size="sm" color="gray.400" />
+            <Text color="gray.500" fontSize="xs">Carregando...</Text>
           </VStack>
-          <Spinner size="sm" color="gray.400" />
-        </HStack>
+        </Center>
       </Box>
     );
   }
 
   return (
-    <Pressable onPress={onPress}>
+    <Pressable 
+      onPress={onPress}
+      width="48%"
+      m={1}
+    >
       {({ isPressed }) => (
         <Box 
-          bg={isPressed ? "gray.100" : "white"}
-          p={4}
-          m={2}
-          borderRadius="lg"
-          shadow={2}
-          borderLeftWidth={4}
-          borderLeftColor={corBorda}
+          bg={corFundo}
+          p={3}
+          borderRadius="2xl"
+          shadow={3}
+          opacity={isPressed ? 0.8 : 1}
+          style={{
+            aspectRatio: 1,
+            transform: [{ scale: isPressed ? 0.95 : 1 }]
+          }}
+          overflow="hidden"
         >
-          <HStack justifyContent="space-between" alignItems="center">
-            <VStack>
-              <Text fontSize="lg" fontWeight="bold" color="gray.800">
-                {pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1)}
+          <VStack flex={1} justifyContent="space-between">
+            
+            {/* Cabeçalho com número e nome */}
+            <HStack justifyContent="space-between" alignItems="flex-start">
+              <Text 
+                color="white" 
+                fontSize="xs" 
+                fontWeight="bold"
+                opacity={0.9}
+              >
+                #{numero.toString().padStart(3, '0')}
               </Text>
-              <Text color="gray.500" fontSize="sm">#{numero}</Text>
-              <Text color={corBorda} fontSize="xs" fontWeight="medium" textTransform="capitalize">
+            </HStack>
+
+            {/* Nome do Pokémon */}
+            <Text 
+              color="white" 
+              fontSize="sm" 
+              fontWeight="bold"
+              textTransform="capitalize"
+              numberOfLines={1}
+            >
+              {pokemon.name}
+            </Text>
+
+            {/* Imagem do Pokémon */}
+            <Center flex={1}>
+              {imagemPokemon ? (
+                <Image
+                  source={{ uri: imagemPokemon }}
+                  alt={pokemon.name}
+                  size="lg"
+                  resizeMode="contain"
+                  style={{
+                    shadowColor: "#000",
+                    shadowOffset: { width: 0, height: 2 },
+                    shadowOpacity: 0.3,
+                    shadowRadius: 4,
+                  }}
+                />
+              ) : (
+                <Text color="white" fontSize="xs" opacity={0.7}>
+                  Sem imagem
+                </Text>
+              )}
+            </Center>
+
+            {/* Tipo */}
+            <Box 
+              bg="white" 
+              px={2} 
+              py={1} 
+              borderRadius="full" 
+              alignSelf="flex-start"
+              opacity={0.9}
+            >
+              <Text 
+                fontSize="xs" 
+                fontWeight="bold" 
+                textTransform="capitalize"
+                color={corFundo}
+              >
                 {tipoPokemon}
               </Text>
-            </VStack>
-            <Text color={corBorda} fontSize="xl" fontWeight="bold">→</Text>
-          </HStack>
+            </Box>
+          </VStack>
         </Box>
       )}
     </Pressable>

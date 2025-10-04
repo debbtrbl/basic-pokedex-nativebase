@@ -9,10 +9,6 @@ export default function RootLayout() {
           name="index" 
           options={{ headerShown: false }} 
         />
-        <Stack.Screen 
-          name="DetalhesScreen" 
-          options={{ title: "Detalhes do Pokémon" }} 
-        />
       </Stack>
     </NativeBaseProvider>
   );
