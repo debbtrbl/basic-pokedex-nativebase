@@ -66,16 +66,6 @@ Opções para Visualizar:
 - PokeAPI para dados dos Pokémon
 
 ##  📸 Screenshots
+#### Tela principal com lista de pokémon e modal de detalhes
+<img src="./assets/screenshots/tela principal.png" width="200" alt="Tela Principal"> <img src="./assets/screenshots/modal detalhes.png" width="200" alt="Detalhes do Pokémon">
 
-<div align="center">
-  
-### Tela Principal com Lista de Pokémon
-<img src="./assets/screenshots/tela principal.png" width="200" alt="Tela Principal">
-
-### Modal de Detalhes
-<img src="./assets/screenshots/modal detalhes.png" width="200" alt="Detalhes do Pokémon">
-
-### Tela de Busca
-<img src="./assets/screenshots/barra-pesquisa.png" width="200" alt="Busca de Pokémon">
-
-</div>
