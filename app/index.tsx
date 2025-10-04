@@ -364,7 +364,7 @@ const renderizarItemPokemon = ({ item, index }: { item: Pokemon; index: number }
 
                       {/* status */}
                       <Box>
-                        <Text fontWeight="bold" color="gray.600" mb={2}>Status Base</Text>
+                        <Text fontWeight="bold" color="gray.600" mb={2}>Estatísticas</Text>
                         <VStack space={2}>
                           {pokemonSelecionado.stats.map((stat, index) => (
                             <Box key={index}>
