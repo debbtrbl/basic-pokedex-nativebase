@@ -58,10 +58,12 @@ export default function HomeScreen() {
   const [carregandoDetalhes, setCarregandoDetalhes] = useState(false);
   const [offset, setOffset] = useState(0); // offset = 0 (primeira página)
   const limite = 20; // quantidade de pokemon por página
+  const [erroBusca, setErroBusca] = useState(false) 
 
   // buscar lista de pikamon
   const buscarPokemons = async (novoOffset: number) =>{
     setCarregando(true); // comeca a carragr
+    setErroBusca(false); 
     try{
       const response = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=${limite}&offset=${novoOffset}`);
       const dados = await response.json();
@@ -71,6 +73,7 @@ export default function HomeScreen() {
 
     } catch (error) {
       console.error('Error ao buscar Pokémon:', error);
+      setErroBusca(true);
     } finally {
       setCarregando(false); // para de carregar
     }
@@ -150,6 +153,24 @@ const renderizarItemPokemon = ({ item, index }: { item: Pokemon; index: number }
     />
   );;
 
+  const renderizarErro = () => (
+  <Center flex={1}>
+    <VStack space={4} alignItems="center">
+      <Text color="red.500" fontSize="lg">Erro ao carregar Pokémon</Text>
+      <Text color="gray.500" textAlign="center">
+        Verifique sua conexão e tente novamente
+      </Text>
+      <Button 
+        onPress={() => buscarPokemons(offset)} 
+        bg="red.500"
+        borderRadius="lg"
+      >
+        <Text color="white">Tentar Novamente</Text>
+      </Button>
+    </VStack>
+  </Center>
+);
+
   return (
       <KeyboardAvoidingView
         style={{ flex: 1 }}
@@ -193,7 +214,8 @@ const renderizarItemPokemon = ({ item, index }: { item: Pokemon; index: number }
 
           {/* lista de pokemon e loading */}
           <Box flex={1} p={2}>
-            {carregando && pokemons.length === 0 ? (
+            {erroBusca ? ( renderizarErro() // mostra botao tente novemnete se der ero
+            ) :carregando && pokemons.length === 0 ? (
           <Center flex={1}>
             <VStack space={4} alignItems="center">
               <Spinner size="lg" color="red.500" />
